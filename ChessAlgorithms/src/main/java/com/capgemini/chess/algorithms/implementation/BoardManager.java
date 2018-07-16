@@ -13,6 +13,8 @@ import com.capgemini.chess.algorithms.data.enums.PieceType;
 import com.capgemini.chess.algorithms.data.generated.Board;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveException;
 import com.capgemini.chess.algorithms.implementation.exceptions.KingInCheckException;
+import static com.capgemini.chess.algorithms.implementation.MovementManager.*;
+import static com.capgemini.chess.algorithms.data.PredicateFactory.*;
 
 /**
  * Class for managing of basic operations on the Chess Board.
@@ -232,9 +234,45 @@ public class BoardManager {
 	}
 
 	private Move validateMove(Coordinate from, Coordinate to) throws InvalidMoveException, KingInCheckException {
+		if (pieceOutOfBoard().test(from, to)) {
+			throw new IndexOutOfBoundsException();
+		}
+		if (isSpotEmpty().test(from, board)) {
+			throw new InvalidMoveException();
+		}
+		Move returnMovement = new Move();
+		switch (board.getPieceAt(from)) {
+		case WHITE_KING:
+			returnMovement = validateWhiteKing(from, to, board);
+			break;
+		case WHITE_QUEEN:
+			break;
+		case WHITE_BISHOP:
+			break;
+		case WHITE_KNIGHT:
+			break;
+		case WHITE_ROOK:
+			break;
+		case WHITE_PAWN:
+			break;
+		case BLACK_KING:
+			break;
+		case BLACK_QUEEN:
+			break;
+		case BLACK_BISHOP:
+			break;
+		case BLACK_KNIGHT:
+			break;
+		case BLACK_ROOK:
+			break;
+		case BLACK_PAWN:
+			break;
+		default:
+			break;
 
+		}
 		// TODO please add implementation here
-		return null;
+		return returnMovement;
 	}
 
 	private boolean isKingInCheck(Color kingColor) {
@@ -246,7 +284,6 @@ public class BoardManager {
 	private boolean isAnyMoveValid(Color nextMoveColor) {
 
 		// TODO please add implementation here
-
 		return false;
 	}
 

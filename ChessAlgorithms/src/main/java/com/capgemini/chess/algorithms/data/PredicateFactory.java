@@ -19,30 +19,46 @@ public class PredicateFactory {
 				|| (p.getColor() == Color.WHITE && c.getY() == 1);
 	}
 
-	public static BiPredicate<Coordinate, Coordinate> isMovementToLong(int maxRange) {
+	public static BiPredicate<Coordinate, Coordinate> isMovementTooLong(int maxRange) {
 
-		return (from, to) -> (Math.abs(from.getX() - to.getX()) <= maxRange)
-				&& (Math.abs(from.getY() - to.getY()) <= maxRange);
+		return (from, to) -> (Math.abs(from.getX() - to.getX()) > maxRange)
+				|| (Math.abs(from.getY() - to.getY()) > maxRange);
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isMovementStraight() {
 
-		return (from, to) -> (((from.getX() - from.getX()) == 0) ^ ((from.getY() - from.getY()) == 0));
+		return (from, to) -> (from.getX() == to.getX()) && (from.getY() != to.getY()) ||
+				(from.getX() != to.getX()) && (from.getY() == to.getY());
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isMovementDiagonal() {
 
-		return (from, to) -> (from.getX() - from.getX()) == (from.getY() - from.getY());
+		return (from, to) -> (Math.abs(from.getX() - to.getX())) == (Math.abs(from.getY() - to.getY()));
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isWhiteForwardMovement() {
 
-		return (from, to) -> from.getX() < to.getX();
+		return (from, to) -> from.getY() < to.getY();
+	}
+	
+	public static BiPredicate<Coordinate, Coordinate> isBlackForwardMovement() {
+
+		return (from, to) -> from.getY() > to.getY();
 	}
 
 	public static BiPredicate<Coordinate, Board> isSpotEmpty() {
+		return (spot, board) -> board.getPieceAt(spot) == null;
+	}
+	
+	public static BiPredicate<Piece, Piece> isThisEnemyPiece() {
 
-		return (spot, board) -> board.getPieceAt(spot).getColor() == Color.WHITE
-				|| board.getPieceAt(spot).getColor() == Color.BLACK;
+		return (pieceFrom, pieceTo) -> pieceFrom.getColor() != pieceTo.getColor();
+	}
+	
+
+	public static BiPredicate<Coordinate, Coordinate> isMovementLShaped() {
+
+		return (from, to) -> (Math.abs(from.getX() - to.getX()) == 2) && (Math.abs(from.getY() - to.getY()) == 1)
+				|| (Math.abs(from.getX() - to.getX()) == 1) && (Math.abs(from.getY() - to.getY()) == 2);
 	}
 }

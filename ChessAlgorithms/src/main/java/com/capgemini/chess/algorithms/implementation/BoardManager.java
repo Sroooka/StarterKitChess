@@ -238,38 +238,51 @@ public class BoardManager {
 			throw new IndexOutOfBoundsException();
 		}
 		if (isSpotEmpty().test(from, board)) {
+			System.out.println("Board Manager Validate Move // X: " + from.getX() + " Y: " + from.getY());
 			throw new InvalidMoveException();
 		}
+
 		Move returnMovement = new Move();
+
 		switch (board.getPieceAt(from)) {
 		case WHITE_KING:
 			returnMovement = validateWhiteKing(from, to, board);
 			break;
 		case WHITE_QUEEN:
+			returnMovement = validateWhiteQueen(from, to, board);
 			break;
 		case WHITE_BISHOP:
+			returnMovement = validateWhiteBishop(from, to, board);
 			break;
 		case WHITE_KNIGHT:
+			returnMovement = validateWhiteKnight(from, to, board);
 			break;
 		case WHITE_ROOK:
+			returnMovement = validateWhiteRook(from, to, board);
 			break;
 		case WHITE_PAWN:
+			returnMovement = validateWhitePawn(from, to, board);
 			break;
 		case BLACK_KING:
+			returnMovement = validateBlackKing(from, to, board);
 			break;
 		case BLACK_QUEEN:
+			returnMovement = validateBlackQueen(from, to, board);
 			break;
 		case BLACK_BISHOP:
+			returnMovement = validateBlackBishop(from, to, board);
 			break;
 		case BLACK_KNIGHT:
+			returnMovement = validateBlackKnight(from, to, board);
 			break;
 		case BLACK_ROOK:
+			returnMovement = validateBlackRook(from, to, board);
 			break;
 		case BLACK_PAWN:
+			returnMovement = validateBlackPawn(from, to, board);
 			break;
 		default:
-			break;
-
+			throw new InvalidMoveException();
 		}
 		// TODO please add implementation here
 		return returnMovement;

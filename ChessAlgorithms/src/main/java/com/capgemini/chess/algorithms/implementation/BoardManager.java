@@ -248,42 +248,24 @@ public class BoardManager {
 
 		Move returnMovement = new Move();
 
-		switch (board.getPieceAt(from)) {
-		case WHITE_KING:
-			returnMovement = validateWhiteKing(from, to, board);
+		switch (board.getPieceAt(from).getType()) {
+		case KING:
+			returnMovement = validateKing(from, to, board);
 			break;
-		case WHITE_QUEEN:
-			returnMovement = validateWhiteQueen(from, to, board);
+		case QUEEN:
+			returnMovement = validateQueen(from, to, board);
 			break;
-		case WHITE_BISHOP:
-			returnMovement = validateWhiteBishop(from, to, board);
+		case BISHOP:
+			returnMovement = validateBishop(from, to, board);
 			break;
-		case WHITE_KNIGHT:
-			returnMovement = validateWhiteKnight(from, to, board);
+		case KNIGHT:
+			returnMovement = validateKnight(from, to, board);
 			break;
-		case WHITE_ROOK:
-			returnMovement = validateWhiteRook(from, to, board);
+		case ROOK:
+			returnMovement = validateRook(from, to, board);
 			break;
-		case WHITE_PAWN:
-			returnMovement = validateWhitePawn(from, to, board);
-			break;
-		case BLACK_KING:
-			returnMovement = validateBlackKing(from, to, board);
-			break;
-		case BLACK_QUEEN:
-			returnMovement = validateBlackQueen(from, to, board);
-			break;
-		case BLACK_BISHOP:
-			returnMovement = validateBlackBishop(from, to, board);
-			break;
-		case BLACK_KNIGHT:
-			returnMovement = validateBlackKnight(from, to, board);
-			break;
-		case BLACK_ROOK:
-			returnMovement = validateBlackRook(from, to, board);
-			break;
-		case BLACK_PAWN:
-			returnMovement = validateBlackPawn(from, to, board);
+		case PAWN:
+			returnMovement = validatePawn(from, to, board);
 			break;
 		default:
 			throw new InvalidMoveException();

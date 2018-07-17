@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 
 import com.capgemini.chess.algorithms.data.enums.Color;
 import com.capgemini.chess.algorithms.data.enums.Piece;
+import com.capgemini.chess.algorithms.data.enums.PieceType;
 import com.capgemini.chess.algorithms.data.generated.Board;
 
 public class PredicateFactory {
@@ -65,5 +66,9 @@ public class PredicateFactory {
 	public static BiPredicate<Coordinate, Coordinate> theSameCoordinates() {
 
 		return (from, to) -> from.getX() == to.getX() && from.getY() == to.getY();
+	}
+	
+	public static Predicate<Piece> pieceIsKing(){
+		return (p) -> p.getType() == PieceType.KING;
 	}
 }

@@ -234,44 +234,8 @@ public class BoardManager {
 	}
 
 	private Move validateMove(Coordinate from, Coordinate to) throws InvalidMoveException, KingInCheckException {
-		if (pieceOutOfBoard().test(from, to)) {
-			throw new IndexOutOfBoundsException();
-		}
-		if (isSpotEmpty().test(from, board)) {
-			System.out.println("Board Manager Validate Move // X: " + from.getX() + " Y: " + from.getY());
-			throw new InvalidMoveException();
-		}
-		if (theSameCoordinates().test(from, to)) {
-			System.out.println("Board Manager Validate Move // X: " + from.getX() + " Y: " + from.getY());
-			throw new InvalidMoveException();
-		}
-
-		Move returnMovement = new Move();
-
-		switch (board.getPieceAt(from).getType()) {
-		case KING:
-			returnMovement = validateKing(from, to, board);
-			break;
-		case QUEEN:
-			returnMovement = validateQueen(from, to, board);
-			break;
-		case BISHOP:
-			returnMovement = validateBishop(from, to, board);
-			break;
-		case KNIGHT:
-			returnMovement = validateKnight(from, to, board);
-			break;
-		case ROOK:
-			returnMovement = validateRook(from, to, board);
-			break;
-		case PAWN:
-			returnMovement = validatePawn(from, to, board);
-			break;
-		default:
-			throw new InvalidMoveException();
-		}
-		// TODO please add implementation here
-		return returnMovement;
+		MovementManager movementManager = new MovementManager(from, to, this.board);
+		return movementManager.validate();
 	}
 
 	private boolean isKingInCheck(Color kingColor) {
@@ -282,8 +246,10 @@ public class BoardManager {
 
 	private boolean isAnyMoveValid(Color nextMoveColor) {
 
+		MovementManager movementManager = new MovementManager(this.board);
+		return movementManager.areAnyPossibleMoves(nextMoveColor);
 		// TODO please add implementation here
-		return false;
+
 	}
 
 	private Color calculateNextMoveColor() {

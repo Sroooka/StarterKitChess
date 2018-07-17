@@ -12,166 +12,200 @@ import static com.capgemini.chess.algorithms.data.PredicateFactory.*;
 
 public class MovementManager {
 
-	public static Move validateKing(Coordinate from, Coordinate to, Board board)
-			throws InvalidMoveException, KingInCheckException {
-		Move movement = new Move();
-		movement.setFrom(from);
-		movement.setTo(to);
+	private Coordinate from;
+	private Coordinate to;
+	private Board board;
+	private Move movement;
 
-		// TODO sprawdzanie czy wykonywana jest roszada, wtedy max range krola
-		// ma 2 pola
-		// int maxRange = isKingCastling().test(from, board.getPieceAt(from)) ?
-		// 2 : 1;
-		if (isMovementTooLong(1).test(from, to)) {
-			throw new InvalidMoveException();
-		}
+	public MovementManager() {
+		this.from = null;
+		this.to = null;
+		this.board = null;
+		this.movement = null;
+	}
 
-		if (isSpotEmpty().test(to, board)) {
-			movement.setType(MoveType.ATTACK);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
-			movement.setType(MoveType.CAPTURE);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-		} else {
-			System.out.println("Error");
+	public MovementManager(Board board) {
+		this.from = null;
+		this.to = null;
+		this.board = board;
+		this.movement = new Move();
+		this.movement.setFrom(new Coordinate(0, 0));
+		this.movement.setTo(new Coordinate(0, 0));
+	}
+
+	public MovementManager(Coordinate from, Coordinate to, Board board) {
+		this.from = from;
+		this.to = to;
+		this.board = board;
+		this.movement = new Move();
+		this.movement.setFrom(from);
+		this.movement.setTo(to);
+	}
+
+	public Move validate() throws KingInCheckException, InvalidMoveException {
+		pieceIsOnBoard();
+		sourceSpotIsNotEmpty();
+		coordinatesAreNotTheSame();
+
+		switch (board.getPieceAt(from).getType()) {
+		case KING:
+			return validateKing();
+		case QUEEN:
+			return validateQueen();
+		case BISHOP:
+			return validateBishop();
+		case KNIGHT:
+			return validateKnight();
+		case ROOK:
+			return validateRook();
+		case PAWN:
+			return validatePawn();
+		default:
 			throw new InvalidMoveException();
 		}
 	}
 
-	public static Move validateQueen(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
-		Move movement = new Move();
-		movement.setFrom(from);
-		movement.setTo(to);
+	public boolean areAnyPossibleMoves(Color nextMoveColor) {
+		Coordinate srcSpot, destSpot;
+		boolean foundPossibleMove = false;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				srcSpot = new Coordinate(i, j);
+				if (!isSpotEmpty().test(srcSpot, board) && (board.getPieceAt(srcSpot).getColor() == nextMoveColor)) {
+					for (int m = 0; m < 8; m++) {
+						for (int n = 0; n < 8; n++) {
+							destSpot = new Coordinate(m, n);
+							this.from = srcSpot;
+							this.to = destSpot;
+							try {
+								validate();
+								foundPossibleMove = true;
+							} catch (InvalidMoveException e2) {
+								
+							}
+						}
+					}
+				}
+			}
+		}
+		return foundPossibleMove;
+	}
+
+	private Move validateKing() throws InvalidMoveException, KingInCheckException {
+
+		// TODO sprawdzanie czy wykonywana jest roszada, wtedy max range krola
+
+		checkRangeOfLength(1);
+
+		return movementDone();
+	}
+
+	private Move validateQueen() throws InvalidMoveException {
 
 		if (isMovementStraight().test(from, to)) {
-			// straight movement
-			int deltaX = from.getX() - to.getX();
-			int deltaY = from.getY() - to.getY();
-			Coordinate spot = from;
-			int xDirection = 0, yDirection = 0;
-			if (deltaX == 0) {
-				// vertical movement
-				yDirection = (deltaY < 0) ? 1 : -1;
-			} else {
-				// horizontal movement
-				xDirection = (deltaX < 0) ? 1 : -1;
-			}
+			checkObstaclesWhenMovingStraight();
 
-			for (int i = 0; i < Math.abs(deltaX + deltaY) - 1; i++)
-			// sum because 1 of this is 0
-			{
-				spot = new Coordinate(spot.getX() + xDirection, spot.getY() + yDirection);
-				if (!isSpotEmpty().test(spot, board)) {
-					System.out.println("Something is stanting on the way!");
-					throw new InvalidMoveException();
-				}
-			}
 		} else if (isMovementDiagonal().test(from, to)) {
-			// diagonal movement
-			// is something blocking way to this spot?
-			int deltaX = from.getX() - to.getX();
-			int deltaY = from.getY() - to.getY();
-			Coordinate spot = from;
-			int xDirection = (deltaX < 0) ? 1 : -1;
-			int yDirection = (deltaY < 0) ? 1 : -1;
-			for (int i = 0; i < Math.abs(deltaX) - 1; i++) {
-				spot = new Coordinate(spot.getX() + xDirection, spot.getY() + yDirection);
-				if (!isSpotEmpty().test(spot, board)) {
-					System.out.println("Something is stanting on the way!");
-					throw new InvalidMoveException();
-				}
-			}
+			checkObstaclesWhenMovingDiagonal();
+
 		} else {
-			System.out.println("Error");
 			throw new InvalidMoveException();
 		}
 
-		if (isSpotEmpty().test(to, board)) {
-			movement.setType(MoveType.ATTACK);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
-			movement.setType(MoveType.CAPTURE);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-		}
+		return movementDone();
+	}
 
-		System.out.println("Error");
+	private Move validateBishop() throws InvalidMoveException {
+
+		movementMustBeDiagonal();
+
+		checkObstaclesWhenMovingDiagonal();
+
+		return movementDone();
+
+	}
+
+	private Move validateKnight() throws InvalidMoveException {
+
+		movementMustBeLShaped();
+
+		return movementDone();
+
+	}
+
+	private Move validateRook() throws InvalidMoveException {
+
+		movementMustBeStraight();
+
+		checkObstaclesWhenMovingStraight();
+
+		return movementDone();
+
+	}
+
+	private Move validatePawn() throws InvalidMoveException {
+
+		pawnMustMoveForward();
+		if (isMovementStraight().test(from, to)) {
+			int maxRange = pawnFirstMove().test(from, board.getPieceAt(from)) ? 2 : 1;
+			checkRangeOfLength(maxRange);
+			pawnSpotsOnWayMustBeEmpty(maxRange);
+			return attackDone();
+
+		} else if (isMovementDiagonal().test(from, to)) {
+			checkRangeOfLength(1);
+			destinationSpotCannotBeEmpty();
+			destinationSpotMustContainEnemy();
+			return captureDone();
+		}
 		throw new InvalidMoveException();
 	}
 
-	public static Move validateBishop(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
-		Move movement = new Move();
-		movement.setFrom(from);
-		movement.setTo(to);
-		if (!isMovementDiagonal().test(from, to)) {
-			System.out.println("Movement is not diagonal!!");
+	public void pieceIsOnBoard() throws InvalidMoveException {
+		if (pieceOutOfBoard().test(from, to)) {
 			throw new InvalidMoveException();
 		}
+	}
 
-		// is something blocking way to this spot?
-		int deltaX = from.getX() - to.getX();
-		int deltaY = from.getY() - to.getY();
+	public void sourceSpotIsNotEmpty() throws InvalidMoveException {
+		if (isSpotEmpty().test(from, board)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	public void coordinatesAreNotTheSame() throws InvalidMoveException {
+		if (theSameCoordinates().test(from, to)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void checkRangeOfLength(int maxRange) throws InvalidMoveException {
+		if (isMovementTooLong(maxRange).test(from, to)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void pawnSpotsOnWayMustBeEmpty(int maxRange) throws InvalidMoveException {
+		int movementDirection = (board.getPieceAt(from).getColor() == Color.BLACK) ? -1 : 1;
 		Coordinate spot = from;
-		int xDirection = (deltaX < 0) ? 1 : -1;
-		int yDirection = (deltaY < 0) ? 1 : -1;
-		for (int i = 0; i < Math.abs(deltaX) - 1; i++) {
-			spot = new Coordinate(spot.getX() + xDirection, spot.getY() + yDirection);
+		for (int i = 0; i < maxRange; i++) {
+			spot = new Coordinate(spot.getX(), spot.getY() + movementDirection);
 			if (!isSpotEmpty().test(spot, board)) {
-				System.out.println("Something is stanting on the way!");
 				throw new InvalidMoveException();
 			}
 		}
-
-		if (isSpotEmpty().test(to, board)) {
-			movement.setType(MoveType.ATTACK);
-			movement.setMovedPiece(board.getPieceAt(from));
-			System.out.println("Im here");
-			return movement;
-		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
-
-			movement.setType(MoveType.CAPTURE);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-		}
-		System.out.println("Error");
-		throw new InvalidMoveException();
 	}
 
-	public static Move validateKnight(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
-		Move movement = new Move();
-		movement.setFrom(from);
-		movement.setTo(to);
-		if (!isMovementLShaped().test(from, to)) {
-			System.out.println("Movement is not L shaped!");
+	private void pawnMustMoveForward() throws InvalidMoveException {
+		boolean isBlack = (board.getPieceAt(from).getColor() == Color.BLACK) ? true : false;
+		if ((!isBlack && !isWhiteForwardMovement().test(from, to))
+				|| (isBlack && !isBlackForwardMovement().test(from, to))) {
 			throw new InvalidMoveException();
 		}
-		if (isSpotEmpty().test(to, board)) {
-			movement.setType(MoveType.ATTACK);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
-			movement.setType(MoveType.CAPTURE);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-		}
-		System.out.println("My own piece at this spot!");
-		throw new InvalidMoveException();
 	}
 
-	public static Move validateRook(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
-
-		Move movement = new Move();
-		movement.setFrom(from);
-		movement.setTo(to);
-		if (!isMovementStraight().test(from, to)) {
-			System.out.println("Movement is not straight!");
-			throw new InvalidMoveException();
-		}
-
-		// is something blocking way to this spot?
+	private void checkObstaclesWhenMovingStraight() throws InvalidMoveException {
+		// straight movement
 		int deltaX = from.getX() - to.getX();
 		int deltaY = from.getY() - to.getY();
 		Coordinate spot = from;
@@ -189,94 +223,86 @@ public class MovementManager {
 		{
 			spot = new Coordinate(spot.getX() + xDirection, spot.getY() + yDirection);
 			if (!isSpotEmpty().test(spot, board)) {
-				System.out.println("Something is stanting on the way!");
 				throw new InvalidMoveException();
 			}
-		}
-
-		if (isSpotEmpty().test(to, board)) {
-			movement.setType(MoveType.ATTACK);
-			movement.setMovedPiece(board.getPieceAt(from));
-			System.out.println("Im here");
-			return movement;
-		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
-			movement.setType(MoveType.CAPTURE);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-		}
-
-		System.out.println("My own piece at this spot!");
-		throw new InvalidMoveException();
-	}
-
-	public static Move validatePawn(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
-
-		Move movement = new Move();
-		movement.setFrom(from);
-		movement.setTo(to);
-
-		isPawnMovingForward(from, to, board);
-
-		if (isMovementStraight().test(from, to)) {
-
-			// first move - range 2, next moves - range 1
-			int maxRange = pawnFirstMove().test(from, board.getPieceAt(from)) ? 2 : 1;
-			checkRange(maxRange, from, to);
-
-			checkPawnSpots(from, to, board);
-
-			movement.setType(MoveType.ATTACK);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-
-		} else if (isMovementDiagonal().test(from, to)) {
-			System.out.println("Movement Diagonal");
-
-			if (isMovementTooLong(1).test(from, to)) {
-				System.out.println("Too Long Movement!");
-				throw new InvalidMoveException();
-			}
-			if (isSpotEmpty().test(to, board)) {
-				System.out.println("Spot is empty");
-				throw new InvalidMoveException();
-			}
-
-			if (!isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
-				System.out.println("This is not enemy piece!");
-				throw new InvalidMoveException();
-			}
-
-			movement.setType(MoveType.CAPTURE);
-			movement.setMovedPiece(board.getPieceAt(from));
-			return movement;
-		}
-
-		throw new InvalidMoveException();
-	}
-
-	private static void checkRange(int maxRange, Coordinate from, Coordinate to) throws InvalidMoveException {
-		if (isMovementTooLong(maxRange).test(from, to)) {
-			throw new InvalidMoveException();
 		}
 	}
 
-	private static void checkPawnSpots(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
-		int movementDirection = (board.getPieceAt(from).getColor() == Color.BLACK) ? -1 : 1;
-		for (int i = from.getY();; i += movementDirection) {
-			if (i == to.getY())
-				break;
-			Coordinate spot = new Coordinate(from.getX(), i + movementDirection);
+	private void checkObstaclesWhenMovingDiagonal() throws InvalidMoveException {
+		int deltaX = from.getX() - to.getX();
+		int deltaY = from.getY() - to.getY();
+		Coordinate spot = from;
+		int xDirection = (deltaX < 0) ? 1 : -1;
+		int yDirection = (deltaY < 0) ? 1 : -1;
+		for (int i = 0; i < Math.abs(deltaX) - 1; i++) {
+			spot = new Coordinate(spot.getX() + xDirection, spot.getY() + yDirection);
 			if (!isSpotEmpty().test(spot, board)) {
 				throw new InvalidMoveException();
 			}
 		}
+
 	}
 
-	private static void isPawnMovingForward(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
-		boolean isBlack = (board.getPieceAt(from).getColor() == Color.BLACK) ? true : false;
-		if ((!isBlack && !isWhiteForwardMovement().test(from, to))
-				|| (isBlack && !isBlackForwardMovement().test(from, to))) {
-			System.out.println("White is not moving forward");
+	private void movementMustBeDiagonal() throws InvalidMoveException {
+		if (!isMovementDiagonal().test(from, to)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void movementMustBeLShaped() throws InvalidMoveException {
+		if (!isMovementLShaped().test(from, to)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void movementMustBeStraight() throws InvalidMoveException {
+		if (!isMovementStraight().test(from, to)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void destinationSpotCannotBeEmpty() throws InvalidMoveException {
+		if (isSpotEmpty().test(to, board)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void destinationSpotMustContainEnemy() throws InvalidMoveException {
+		if (!isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private Move captureDone() throws InvalidMoveException {
+		cantCaptureKing();
+		movement.setType(MoveType.CAPTURE);
+		movement.setMovedPiece(board.getPieceAt(from));
+		return movement;
+	}
+
+	private Move attackDone() {
+		movement.setType(MoveType.ATTACK);
+		movement.setMovedPiece(board.getPieceAt(from));
+		return movement;
+	}
+
+	private Move movementDone() throws InvalidMoveException {
+		if (isSpotEmpty().test(to, board)) {
+			movement.setType(MoveType.ATTACK);
+			movement.setMovedPiece(board.getPieceAt(from));
+			return movement;
+		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
+			cantCaptureKing();
+			movement.setType(MoveType.CAPTURE);
+			movement.setMovedPiece(board.getPieceAt(from));
+			return movement;
+		} else {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void cantCaptureKing() throws InvalidMoveException {
+		if (pieceIsKing().test(board.getPieceAt(to))) {
 			throw new InvalidMoveException();
 		}
 	}

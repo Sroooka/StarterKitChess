@@ -25,9 +25,42 @@ public class MovementManager {
 		return null;
 	}
 
-	public static Move validateWhiteBishop(Coordinate from, Coordinate to, Board board) {
+	public static Move validateWhiteBishop(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
+		Move movement = new Move();
+		movement.setFrom(from);
+		movement.setTo(to);
+		if (!isMovementDiagonal().test(from, to)) {
+			System.out.println("Movement is not diagonal!!");
+			throw new InvalidMoveException();
+		}
 
-		return null;
+		// is something blocking way to this spot?
+		int deltaX = from.getX() - to.getX();
+		int deltaY = from.getY() - to.getY();
+		Coordinate spot = from;
+		int xDirection = (deltaX < 0) ? 1 : -1;
+		int yDirection = (deltaY < 0) ? 1 : -1;
+		for (int i = 0; i < Math.abs(deltaX) - 1; i++) {
+			spot = new Coordinate(spot.getX() + xDirection, spot.getY() + yDirection);
+			if (!isSpotEmpty().test(spot, board)) {
+				System.out.println("Something is stanting on the way!");
+				throw new InvalidMoveException();
+			}
+		}
+
+		if (isSpotEmpty().test(to, board)) {
+			movement.setType(MoveType.ATTACK);
+			movement.setMovedPiece(board.getPieceAt(from));
+			System.out.println("Im here");
+			return movement;
+		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
+
+			movement.setType(MoveType.CAPTURE);
+			movement.setMovedPiece(board.getPieceAt(from));
+			return movement;
+		}
+		System.out.println("Error");
+		throw new InvalidMoveException();
 	}
 
 	public static Move validateWhiteKnight(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
@@ -127,9 +160,43 @@ public class MovementManager {
 		return null;
 	}
 
-	public static Move validateBlackBishop(Coordinate from, Coordinate to, Board board) {
+	public static Move validateBlackBishop(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
 
-		return null;
+		Move movement = new Move();
+		movement.setFrom(from);
+		movement.setTo(to);
+		if (!isMovementDiagonal().test(from, to)) {
+			System.out.println("Movement is not diagonal!!");
+			throw new InvalidMoveException();
+		}
+
+		// is something blocking way to this spot?
+		int deltaX = from.getX() - to.getX();
+		int deltaY = from.getY() - to.getY();
+		Coordinate spot = from;
+		int xDirection = (deltaX < 0) ? 1 : -1;
+		int yDirection = (deltaY < 0) ? 1 : -1;
+		for (int i = 0; i < Math.abs(deltaX) - 1; i++) {
+			spot = new Coordinate(spot.getX() + xDirection, spot.getY() + yDirection);
+			if (!isSpotEmpty().test(spot, board)) {
+				System.out.println("Something is stanting on the way!");
+				throw new InvalidMoveException();
+			}
+		}
+
+		if (isSpotEmpty().test(to, board)) {
+			movement.setType(MoveType.ATTACK);
+			movement.setMovedPiece(board.getPieceAt(from));
+			System.out.println("Im here");
+			return movement;
+		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
+
+			movement.setType(MoveType.CAPTURE);
+			movement.setMovedPiece(board.getPieceAt(from));
+			return movement;
+		}
+		System.out.println("Error");
+		throw new InvalidMoveException();
 	}
 
 	public static Move validateBlackKnight(Coordinate from, Coordinate to, Board board) throws InvalidMoveException {
@@ -137,21 +204,21 @@ public class MovementManager {
 		Move movement = new Move();
 		movement.setFrom(from);
 		movement.setTo(to);
-		if(!isMovementLShaped().test(from,  to)){
+		if (!isMovementLShaped().test(from, to)) {
 			System.out.println("Movement is not L shaped!");
 			throw new InvalidMoveException();
 		}
-		if(isSpotEmpty().test(to, board)){
+		if (isSpotEmpty().test(to, board)) {
 			movement.setType(MoveType.ATTACK);
 			movement.setMovedPiece(board.getPieceAt(from));
 			return movement;
-		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))){
+		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
 			movement.setType(MoveType.CAPTURE);
 			movement.setMovedPiece(board.getPieceAt(from));
 			return movement;
-		} 
-			System.out.println("My own piece at this spot!");
-			throw new InvalidMoveException();
+		}
+		System.out.println("My own piece at this spot!");
+		throw new InvalidMoveException();
 	}
 
 	public static Move validateBlackRook(Coordinate from, Coordinate to, Board board) {

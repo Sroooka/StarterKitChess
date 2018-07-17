@@ -61,4 +61,9 @@ public class PredicateFactory {
 		return (from, to) -> (Math.abs(from.getX() - to.getX()) == 2) && (Math.abs(from.getY() - to.getY()) == 1)
 				|| (Math.abs(from.getX() - to.getX()) == 1) && (Math.abs(from.getY() - to.getY()) == 2);
 	}
+	
+	public static BiPredicate<Coordinate, Coordinate> theSameCoordinates() {
+
+		return (from, to) -> from.getX() == to.getX() && from.getY() == to.getY();
+	}
 }

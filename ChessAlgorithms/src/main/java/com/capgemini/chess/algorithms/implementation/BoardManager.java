@@ -241,6 +241,10 @@ public class BoardManager {
 			System.out.println("Board Manager Validate Move // X: " + from.getX() + " Y: " + from.getY());
 			throw new InvalidMoveException();
 		}
+		if (theSameCoordinates().test(from, to)) {
+			System.out.println("Board Manager Validate Move // X: " + from.getX() + " Y: " + from.getY());
+			throw new InvalidMoveException();
+		}
 
 		Move returnMovement = new Move();
 

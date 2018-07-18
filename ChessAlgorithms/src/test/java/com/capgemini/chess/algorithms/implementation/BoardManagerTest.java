@@ -254,7 +254,7 @@ public class BoardManagerTest {
 		assertEquals(Piece.BLACK_ROOK, move.getMovedPiece());
 	}
 	
-	//@Test TODO
+	@Test
 	public void testPerformMoveCastling() throws InvalidMoveException {
 		// given
 		Board board = new Board();
@@ -270,7 +270,7 @@ public class BoardManagerTest {
 		assertEquals(Piece.WHITE_KING, move.getMovedPiece());
 	}
 	
-	//@Test TODO
+	@Test 
 	public void testPerformMoveEnPassant() throws InvalidMoveException {
 		// given
 		Board board = new Board();

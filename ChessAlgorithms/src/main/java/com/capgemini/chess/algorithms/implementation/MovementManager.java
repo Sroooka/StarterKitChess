@@ -72,7 +72,7 @@ public class MovementManager {
 		}
 	}
 	
-	public Move validatePossibleMoves() throws KingInCheckException, InvalidMoveException {
+	public Move validateWithoutPlayer() throws KingInCheckException, InvalidMoveException {
 		pieceIsOnBoard();
 		sourceSpotIsNotEmpty();
 		coordinatesAreNotTheSame();
@@ -107,7 +107,7 @@ public class MovementManager {
 							destSpot = new Coordinate(m, n);
 							MovementManager movementManager = new MovementManager(srcSpot, destSpot, board);
 							try {
-								movementManager.validatePossibleMoves();
+								movementManager.validateWithoutPlayer();
 								foundPossibleMove = true;
 							} catch (InvalidMoveException e2) {
 
@@ -446,9 +446,7 @@ public class MovementManager {
 			MovementManager movementManager = new MovementManager(spot, kingPosition, tempBoard);
 			System.out.println("Spot: " + spot.getX() + "|" + spot.getY());
 			System.out.println("kingPos: " + kingPosition.getX() + "|" + kingPosition.getY());
-			movementManager.playerIsMovingHisOwnFigure();
-			System.out.println("No error in moving his own figure");
-			movementManager.validate();
+			movementManager.validateWithoutPlayer();
 			kingReached = true;
 		} catch (InvalidMoveException e2) {
 

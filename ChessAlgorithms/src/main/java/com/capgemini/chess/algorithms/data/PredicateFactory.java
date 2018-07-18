@@ -15,6 +15,10 @@ public class PredicateFactory {
 				|| to.getY() > 7 || to.getX() < 0 || to.getY() < 0;
 	}
 
+	public static Predicate<Coordinate> singlePieceOutOfBoard() {
+		return (spot) -> spot.getX() > 7 || spot.getY() > 7 || spot.getX() < 0 || spot.getY() < 0;
+	}
+
 	public static BiPredicate<Coordinate, Piece> pawnFirstMove() {
 		return (c, p) -> (p.getColor() == Color.BLACK && c.getY() == 6)
 				|| (p.getColor() == Color.WHITE && c.getY() == 1);
@@ -28,8 +32,8 @@ public class PredicateFactory {
 
 	public static BiPredicate<Coordinate, Coordinate> isMovementStraight() {
 
-		return (from, to) -> (from.getX() == to.getX()) && (from.getY() != to.getY()) ||
-				(from.getX() != to.getX()) && (from.getY() == to.getY());
+		return (from, to) -> (from.getX() == to.getX()) && (from.getY() != to.getY())
+				|| (from.getX() != to.getX()) && (from.getY() == to.getY());
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isMovementDiagonal() {
@@ -41,7 +45,7 @@ public class PredicateFactory {
 
 		return (from, to) -> from.getY() < to.getY();
 	}
-	
+
 	public static BiPredicate<Coordinate, Coordinate> isBlackForwardMovement() {
 
 		return (from, to) -> from.getY() > to.getY();
@@ -50,25 +54,35 @@ public class PredicateFactory {
 	public static BiPredicate<Coordinate, Board> isSpotEmpty() {
 		return (spot, board) -> board.getPieceAt(spot) == null;
 	}
-	
+
 	public static BiPredicate<Piece, Piece> isThisEnemyPiece() {
 
 		return (pieceFrom, pieceTo) -> pieceFrom.getColor() != pieceTo.getColor();
 	}
-	
 
 	public static BiPredicate<Coordinate, Coordinate> isMovementLShaped() {
 
 		return (from, to) -> (Math.abs(from.getX() - to.getX()) == 2) && (Math.abs(from.getY() - to.getY()) == 1)
 				|| (Math.abs(from.getX() - to.getX()) == 1) && (Math.abs(from.getY() - to.getY()) == 2);
 	}
-	
+
 	public static BiPredicate<Coordinate, Coordinate> theSameCoordinates() {
 
 		return (from, to) -> from.getX() == to.getX() && from.getY() == to.getY();
 	}
-	
-	public static Predicate<Piece> pieceIsKing(){
+
+	public static Predicate<Piece> pieceIsKing() {
 		return (p) -> p.getType() == PieceType.KING;
+	}
+
+	public static BiPredicate<Coordinate, Board> isThisMyKing(Color myColor) {
+		return (spot, board) -> board.getPieceAt(spot) != null 
+				&& board.getPieceAt(spot).getType() == PieceType.KING
+				&& board.getPieceAt(spot).getColor() == myColor;
+	}
+	
+	public static BiPredicate<Coordinate, Board> movingMyOwnFigure(Color playerColor){
+		return (from, board) -> board.getPieceAt(from) != null
+				&& board.getPieceAt(from).getColor() == playerColor;
 	}
 }

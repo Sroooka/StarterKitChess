@@ -4,11 +4,17 @@ import com.capgemini.chess.algorithms.data.Coordinate;
 import com.capgemini.chess.algorithms.data.Move;
 import com.capgemini.chess.algorithms.data.enums.Color;
 import com.capgemini.chess.algorithms.data.enums.MoveType;
+import com.capgemini.chess.algorithms.data.enums.Piece;
+import com.capgemini.chess.algorithms.data.enums.PieceType;
 import com.capgemini.chess.algorithms.data.generated.Board;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveException;
 import com.capgemini.chess.algorithms.implementation.exceptions.KingInCheckException;
 
 import static com.capgemini.chess.algorithms.data.PredicateFactory.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MovementManager {
 
@@ -44,6 +50,30 @@ public class MovementManager {
 
 	public Move validate() throws KingInCheckException, InvalidMoveException {
 		pieceIsOnBoard();
+		playerIsMovingHisOwnFigure();
+		sourceSpotIsNotEmpty();
+		coordinatesAreNotTheSame();
+
+		switch (board.getPieceAt(from).getType()) {
+		case KING:
+			return validateKing();
+		case QUEEN:
+			return validateQueen();
+		case BISHOP:
+			return validateBishop();
+		case KNIGHT:
+			return validateKnight();
+		case ROOK:
+			return validateRook();
+		case PAWN:
+			return validatePawn();
+		default:
+			throw new InvalidMoveException();
+		}
+	}
+	
+	public Move validatePossibleMoves() throws KingInCheckException, InvalidMoveException {
+		pieceIsOnBoard();
 		sourceSpotIsNotEmpty();
 		coordinatesAreNotTheSame();
 
@@ -75,13 +105,12 @@ public class MovementManager {
 					for (int m = 0; m < 8; m++) {
 						for (int n = 0; n < 8; n++) {
 							destSpot = new Coordinate(m, n);
-							this.from = srcSpot;
-							this.to = destSpot;
+							MovementManager movementManager = new MovementManager(srcSpot, destSpot, board);
 							try {
-								validate();
+								movementManager.validatePossibleMoves();
 								foundPossibleMove = true;
 							} catch (InvalidMoveException e2) {
-								
+
 							}
 						}
 					}
@@ -277,12 +306,31 @@ public class MovementManager {
 		cantCaptureKing();
 		movement.setType(MoveType.CAPTURE);
 		movement.setMovedPiece(board.getPieceAt(from));
+		myKingCantBeUndelied(movement);
 		return movement;
 	}
 
-	private Move attackDone() {
+	private Move attackDone() throws KingInCheckException {
+
 		movement.setType(MoveType.ATTACK);
+
+		/*
+		 * int deltaY = Math.abs(from.getY() - to.getY()); if (deltaY == 2) { //
+		 * check El Passant Coordinate spot1 = new Coordinate(to.getX() - 1,
+		 * to.getY()); Coordinate spot2 = new Coordinate(to.getX() + 1,
+		 * to.getY()); if (!singlePieceOutOfBoard().test(spot1)) { if
+		 * (!isSpotEmpty().test(spot1, board)) { if
+		 * (isThisEnemyPiece().test(board.getPieceAt(from),
+		 * board.getPieceAt(spot1))) { movement.setType(MoveType.EN_PASSANT); }
+		 * } } if (!singlePieceOutOfBoard().test(spot2)) { if
+		 * (!isSpotEmpty().test(spot2, board)) { if
+		 * (isThisEnemyPiece().test(board.getPieceAt(from),
+		 * board.getPieceAt(spot2))) { movement.setType(MoveType.EN_PASSANT); }
+		 * } } }
+		 */
+
 		movement.setMovedPiece(board.getPieceAt(from));
+		myKingCantBeUndelied(movement);
 		return movement;
 	}
 
@@ -290,11 +338,13 @@ public class MovementManager {
 		if (isSpotEmpty().test(to, board)) {
 			movement.setType(MoveType.ATTACK);
 			movement.setMovedPiece(board.getPieceAt(from));
+			myKingCantBeUndelied(movement);
 			return movement;
 		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
 			cantCaptureKing();
 			movement.setType(MoveType.CAPTURE);
 			movement.setMovedPiece(board.getPieceAt(from));
+			myKingCantBeUndelied(movement);
 			return movement;
 		} else {
 			throw new InvalidMoveException();
@@ -303,6 +353,134 @@ public class MovementManager {
 
 	private void cantCaptureKing() throws InvalidMoveException {
 		if (pieceIsKing().test(board.getPieceAt(to))) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	public boolean isKingInCheckValidator(Color kingColor) {
+		Board tempBoard = new Board();
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				Coordinate spot = new Coordinate(i, j);
+				tempBoard.setPieceAt(board.getPieceAt(spot), spot);
+			}
+		}
+
+		System.out.println("new Board created");
+
+		Coordinate kingPosition = findMyKingPosition(kingColor, tempBoard);
+
+		if (kingPosition != null) {
+			if (kingColor == Color.WHITE) {
+				tempBoard.setPieceAt(Piece.WHITE_PAWN, kingPosition);
+			} else {
+				tempBoard.setPieceAt(Piece.BLACK_PAWN, kingPosition);
+			}
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					Coordinate spot = new Coordinate(i, j);
+					if (!isSpotEmpty().test(spot, tempBoard) && (tempBoard.getPieceAt(spot).getColor() != kingColor)) {
+						System.out.println("Checking spot: " + spot.getX() + " " + spot.getY());
+						System.out.println("Temp board get peice at : " + tempBoard.getPieceAt(new Coordinate(4, 5)));
+						if (canPieceReachMyKing(spot, kingPosition, tempBoard)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private void myKingCantBeUndelied(Move possibleMove) throws KingInCheckException {
+		System.out.println("Im in king cant be unvelied");
+		Color myColor = board.getPieceAt(from).getColor();
+		Board tempBoard = new Board();
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				Coordinate spot = new Coordinate(i, j);
+				tempBoard.setPieceAt(board.getPieceAt(spot), spot);
+			}
+		}
+		for(Move move : board.getMoveHistory()){
+			tempBoard.getMoveHistory().add(move);
+		}
+		
+		System.out.println("new Board created");
+
+		// perform move
+		Piece movedPiece = board.getPieceAt(from);
+		tempBoard.setPieceAt(null, from);
+		tempBoard.setPieceAt(movedPiece, to);
+
+		Coordinate kingPosition = findMyKingPosition(myColor, tempBoard);
+
+		if (kingPosition != null) {
+			if (myColor == Color.WHITE) {
+				tempBoard.setPieceAt(Piece.WHITE_PAWN, kingPosition);
+			} else {
+				tempBoard.setPieceAt(Piece.BLACK_PAWN, kingPosition);
+			}
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					Coordinate spot = new Coordinate(i, j);
+					if (!isSpotEmpty().test(spot, tempBoard) && (tempBoard.getPieceAt(spot).getColor() != myColor)) {
+						System.out.println("Checking spot: " + spot.getX() + " " + spot.getY());
+						System.out.println("Temp board get peice at : " + tempBoard.getPieceAt(new Coordinate(4, 5)));
+						if (canPieceReachMyKing(spot, kingPosition, tempBoard)) {
+							throw new KingInCheckException();
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+	private boolean canPieceReachMyKing(Coordinate spot, Coordinate kingPosition, Board tempBoard) {
+		System.out.println("Im in can piece reach my king");
+
+		boolean kingReached = false;
+		try {
+			MovementManager movementManager = new MovementManager(spot, kingPosition, tempBoard);
+			System.out.println("Spot: " + spot.getX() + "|" + spot.getY());
+			System.out.println("kingPos: " + kingPosition.getX() + "|" + kingPosition.getY());
+			movementManager.playerIsMovingHisOwnFigure();
+			System.out.println("No error in moving his own figure");
+			movementManager.validate();
+			kingReached = true;
+		} catch (InvalidMoveException e2) {
+
+		}
+		System.out.println("King is reached? " + kingReached);
+
+		return kingReached;
+	}
+
+	private Coordinate findMyKingPosition(Color myColor, Board tempBoard) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				Coordinate spot = new Coordinate(i, j);
+				if (isThisMyKing(myColor).test(spot, tempBoard)) {
+					return spot;
+				}
+			}
+		}
+		return null;
+	}
+
+	private Color calculateActualPlayerColor() {
+		if (this.board.getMoveHistory().size() % 2 == 0) {
+			return Color.WHITE;
+		} else {
+			return Color.BLACK;
+		}
+	}
+
+	private void playerIsMovingHisOwnFigure() throws InvalidMoveException {
+		System.out.println("Not that player!");
+		if (!movingMyOwnFigure(calculateActualPlayerColor()).test(from, board)) {
 			throw new InvalidMoveException();
 		}
 	}

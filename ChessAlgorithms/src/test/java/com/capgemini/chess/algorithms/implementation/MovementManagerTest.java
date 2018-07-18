@@ -29,7 +29,6 @@ public class MovementManagerTest {
 
 		Coordinate from = new Coordinate(5, 1);
 		Coordinate to = new Coordinate(5, 3);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -45,7 +44,6 @@ public class MovementManagerTest {
 
 		Coordinate from = new Coordinate(5, 1);
 		Coordinate to = new Coordinate(5, 2);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -179,6 +177,7 @@ public class MovementManagerTest {
 		Coordinate from = new Coordinate(5, 1);
 		Coordinate to = new Coordinate(4, 2);
 
+
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -234,6 +233,7 @@ public class MovementManagerTest {
 
 		Coordinate from = new Coordinate(2, 6);
 		Coordinate to = new Coordinate(2, 4);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -250,6 +250,7 @@ public class MovementManagerTest {
 
 		Coordinate from = new Coordinate(2, 6);
 		Coordinate to = new Coordinate(2, 5);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -383,6 +384,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(1, 5));
 		Coordinate from = new Coordinate(2, 6);
 		Coordinate to = new Coordinate(1, 5);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -400,6 +402,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(3, 5));
 		Coordinate from = new Coordinate(2, 6);
 		Coordinate to = new Coordinate(3, 5);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -439,6 +442,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(1, 2);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -457,6 +461,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(2, 1);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -475,6 +480,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(4, 1);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -492,6 +498,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(5, 2);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -509,6 +516,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(5, 4);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -526,6 +534,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(4, 5);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -543,6 +552,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(2, 5);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -560,6 +570,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(1, 4);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -636,6 +647,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(1, 2));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(1, 2);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -654,6 +666,7 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(5, 4));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(5, 4);
+		board.getMoveHistory().add(new Move());
 
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
@@ -680,7 +693,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(7, 7);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -702,7 +714,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(0, 6);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -724,7 +735,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(0, 0);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -746,7 +756,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(6, 0);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -845,7 +854,6 @@ public class MovementManagerTest {
 		}
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(3, 0));
 		board.setPieceAt(Piece.BLACK_QUEEN, new Coordinate(0, 3));
-
 		Coordinate from = new Coordinate(3, 0);
 		Coordinate to = new Coordinate(0, 3);
 
@@ -869,6 +877,7 @@ public class MovementManagerTest {
 		}
 		board.setPieceAt(Piece.BLACK_BISHOP, new Coordinate(0, 1));
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(6, 7));
+		board.getMoveHistory().add(new Move());
 
 		Coordinate from = new Coordinate(0, 1);
 		Coordinate to = new Coordinate(6, 7);
@@ -921,7 +930,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(3, 7);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -943,7 +951,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(7, 3);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -965,7 +972,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(3, 0);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -987,7 +993,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(0, 3);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1089,7 +1094,6 @@ public class MovementManagerTest {
 
 		Coordinate from = new Coordinate(4, 3);
 		Coordinate to = new Coordinate(4, 5);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1113,7 +1117,6 @@ public class MovementManagerTest {
 
 		Coordinate from = new Coordinate(2, 0);
 		Coordinate to = new Coordinate(2, 7);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1139,7 +1142,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(0, 6));
 		Coordinate from = new Coordinate(0, 6);
 		Coordinate to = new Coordinate(6, 0);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1161,7 +1163,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(3, 7));
 		Coordinate from = new Coordinate(3, 7);
 		Coordinate to = new Coordinate(3, 0);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1183,7 +1184,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(7, 7));
 		Coordinate from = new Coordinate(7, 7);
 		Coordinate to = new Coordinate(0, 0);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1205,7 +1205,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(7, 3));
 		Coordinate from = new Coordinate(7, 3);
 		Coordinate to = new Coordinate(0, 3);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1227,7 +1226,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(6, 0));
 		Coordinate from = new Coordinate(6, 0);
 		Coordinate to = new Coordinate(0, 6);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1249,7 +1247,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(3, 0));
 		Coordinate from = new Coordinate(3, 0);
 		Coordinate to = new Coordinate(3, 7);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1271,7 +1268,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(0, 0));
 		Coordinate from = new Coordinate(0, 0);
 		Coordinate to = new Coordinate(7, 7);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1293,7 +1289,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(0, 3));
 		Coordinate from = new Coordinate(0, 3);
 		Coordinate to = new Coordinate(7, 3);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1395,7 +1390,6 @@ public class MovementManagerTest {
 
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(4, 2);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1419,7 +1413,6 @@ public class MovementManagerTest {
 
 		Coordinate from = new Coordinate(6, 0);
 		Coordinate to = new Coordinate(1, 5);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1445,7 +1438,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(2, 4);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1467,7 +1459,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(3, 4);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1489,7 +1480,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 2));
 		Coordinate from = new Coordinate(2, 2);
 		Coordinate to = new Coordinate(1, 1);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1511,7 +1501,6 @@ public class MovementManagerTest {
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(3, 3));
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(3, 2);
-
 		MovementManager movementManager = new MovementManager(from, to, board);
 		Move move = movementManager.validate();
 		assertEquals(move.getFrom().getX(), from.getX());
@@ -1580,7 +1569,6 @@ public class MovementManagerTest {
 		}
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(3, 3));
 		board.setPieceAt(Piece.BLACK_QUEEN, new Coordinate(3, 4));
-
 		Coordinate from = new Coordinate(3, 3);
 		Coordinate to = new Coordinate(3, 4);
 
@@ -1604,7 +1592,6 @@ public class MovementManagerTest {
 		}
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(1, 3));
 		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(2, 3));
-
 		Coordinate from = new Coordinate(1, 3);
 		Coordinate to = new Coordinate(2, 3);
 
@@ -1616,7 +1603,7 @@ public class MovementManagerTest {
 		assertEquals(move.getTo().getY(), to.getY());
 		assertEquals(move.getType(), MoveType.CAPTURE);
 	}
-	
+
 	@Test
 	public void shouldPawnCaptureAnotherKing() throws KingInCheckException, InvalidMoveException {
 		BoardManager boardManager = new BoardManager();
@@ -1641,7 +1628,7 @@ public class MovementManagerTest {
 
 		assertTrue(exceptionThrown);
 	}
-	
+
 	@Test
 	public void shouldReturnTrueWhenThereArePossibleMovesForBlack() throws KingInCheckException, InvalidMoveException {
 		BoardManager boardManager = new BoardManager();
@@ -1651,17 +1638,17 @@ public class MovementManagerTest {
 
 		assertTrue(movementManager.areAnyPossibleMoves(Color.BLACK));
 	}
-	
+
 	@Test
 	public void shouldReturnTrueWhenThereArePossibleMovesForWhite() throws KingInCheckException, InvalidMoveException {
 		BoardManager boardManager = new BoardManager();
 		Board board = boardManager.getBoard();
-
+		board.getMoveHistory().add(new Move());
 		MovementManager movementManager = new MovementManager(board);
 
 		assertTrue(movementManager.areAnyPossibleMoves(Color.WHITE));
 	}
-	
+
 	@Test
 	public void shouldReturnFalseWhenThereAreNoPiecesOnBoard() throws KingInCheckException, InvalidMoveException {
 		BoardManager boardManager = new BoardManager();
@@ -1676,25 +1663,10 @@ public class MovementManagerTest {
 
 		assertFalse(movementManager.areAnyPossibleMoves(Color.WHITE));
 	}
-	
-	@Test
-	public void shouldReturnTrueWhenOnlyOneWhitePawnIsInMiddleOfBoardForWhite() throws KingInCheckException, InvalidMoveException {
-		BoardManager boardManager = new BoardManager();
-		Board board = boardManager.getBoard();
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				board.setPieceAt(null, new Coordinate(i, j));
-			}
-		}
-		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(3, 3));
 
-		MovementManager movementManager = new MovementManager(board);
-
-		assertTrue(movementManager.areAnyPossibleMoves(Color.WHITE));
-	}
-	
 	@Test
-	public void shouldReturnFalseWhenOnlyOneWhitePawnIsInMiddleOfBoardForWhite() throws KingInCheckException, InvalidMoveException {
+	public void shouldReturnFalseWhenOnlyOneWhitePawnIsInMiddleOfBoardForWhite()
+			throws KingInCheckException, InvalidMoveException {
 		BoardManager boardManager = new BoardManager();
 		Board board = boardManager.getBoard();
 		for (int i = 0; i < 8; i++) {
@@ -1708,9 +1680,10 @@ public class MovementManagerTest {
 
 		assertFalse(movementManager.areAnyPossibleMoves(Color.BLACK));
 	}
-	
+
 	@Test
-	public void shouldReturnFalseWhenOnlyOneWhitePawnIsAtTheEndOfBoard() throws KingInCheckException, InvalidMoveException {
+	public void shouldReturnFalseWhenOnlyOneWhitePawnIsAtTheEndOfBoard()
+			throws KingInCheckException, InvalidMoveException {
 		BoardManager boardManager = new BoardManager();
 		Board board = boardManager.getBoard();
 		for (int i = 0; i < 8; i++) {
@@ -1724,9 +1697,10 @@ public class MovementManagerTest {
 
 		assertFalse(movementManager.areAnyPossibleMoves(Color.WHITE));
 	}
-	
+
 	@Test
-	public void shouldReturnFalseWhenTwoDifferentPawnsOnBoardFaceToFace() throws KingInCheckException, InvalidMoveException {
+	public void shouldReturnFalseWhenTwoDifferentPawnsOnBoardFaceToFace()
+			throws KingInCheckException, InvalidMoveException {
 		BoardManager boardManager = new BoardManager();
 		Board board = boardManager.getBoard();
 		for (int i = 0; i < 8; i++) {
@@ -1742,9 +1716,10 @@ public class MovementManagerTest {
 		assertFalse(movementManager.areAnyPossibleMoves(Color.WHITE));
 		assertFalse(movementManager.areAnyPossibleMoves(Color.BLACK));
 	}
-	
+
 	@Test
-	public void shouldReturnFalseWhenTwoDifferentPawnsOnBoardAwayFromThem() throws KingInCheckException, InvalidMoveException {
+	public void shouldReturnFalseWhenTwoDifferentPawnsOnBoardAwayFromThemMoveWhite()
+			throws KingInCheckException, InvalidMoveException {
 		BoardManager boardManager = new BoardManager();
 		Board board = boardManager.getBoard();
 		for (int i = 0; i < 8; i++) {
@@ -1752,12 +1727,87 @@ public class MovementManagerTest {
 				board.setPieceAt(null, new Coordinate(i, j));
 			}
 		}
+
+		board.getMoveHistory().add(new Move());
+
 		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(3, 0));
 		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(7, 7));
 
 		MovementManager movementManager = new MovementManager(board);
 
 		assertTrue(movementManager.areAnyPossibleMoves(Color.WHITE));
+	}
+
+	@Test
+	public void shouldReturnFalseWhenTwoDifferentPawnsOnBoardAwayFromThemMoveBlack()
+			throws KingInCheckException, InvalidMoveException {
+		BoardManager boardManager = new BoardManager();
+		Board board = boardManager.getBoard();
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				board.setPieceAt(null, new Coordinate(i, j));
+			}
+		}
+
+		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(3, 0));
+		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(7, 7));
+
+		MovementManager movementManager = new MovementManager(board);
+
 		assertTrue(movementManager.areAnyPossibleMoves(Color.BLACK));
+	}
+
+	@Test
+	public void shouldReturnKingExceptionWhenAfterMovementWhiteKingIsInCheck()
+			throws KingInCheckException, InvalidMoveException {
+		BoardManager boardManager = new BoardManager();
+		Board board = boardManager.getBoard();
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				board.setPieceAt(null, new Coordinate(i, j));
+			}
+		}
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(0, 0));
+		board.setPieceAt(Piece.WHITE_KNIGHT, new Coordinate(0, 1));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(0, 7));
+		Coordinate from = new Coordinate(0, 1);
+		Coordinate to = new Coordinate(2, 2);
+
+		boolean exceptionThrown = false;
+		try {
+			MovementManager movementManager = new MovementManager(from, to, board);
+			movementManager.validate();
+		} catch (KingInCheckException e) {
+			exceptionThrown = true;
+		}
+
+		assertTrue(exceptionThrown);
+	}
+
+	@Test
+	public void shouldReturnKingExceptionWhenAfterMovementBlackKingIsInCheck()
+			throws KingInCheckException, InvalidMoveException {
+		BoardManager boardManager = new BoardManager();
+		Board board = boardManager.getBoard();
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				board.setPieceAt(null, new Coordinate(i, j));
+			}
+		}
+		board.setPieceAt(Piece.BLACK_KING, new Coordinate(7, 7));
+		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(7, 6));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(7, 0));
+		Coordinate from = new Coordinate(7, 6);
+		Coordinate to = new Coordinate(5, 5);
+		board.getMoveHistory().add(new Move());
+		boolean exceptionThrown = false;
+		try {
+			MovementManager movementManager = new MovementManager(from, to, board);
+			movementManager.validate();
+		} catch (KingInCheckException e) {
+			exceptionThrown = true;
+		}
+
+		assertTrue(exceptionThrown);
 	}
 }

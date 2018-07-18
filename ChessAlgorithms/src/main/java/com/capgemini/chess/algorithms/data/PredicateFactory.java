@@ -76,13 +76,21 @@ public class PredicateFactory {
 	}
 
 	public static BiPredicate<Coordinate, Board> isThisMyKing(Color myColor) {
-		return (spot, board) -> board.getPieceAt(spot) != null 
-				&& board.getPieceAt(spot).getType() == PieceType.KING
+		return (spot, board) -> board.getPieceAt(spot) != null && board.getPieceAt(spot).getType() == PieceType.KING
 				&& board.getPieceAt(spot).getColor() == myColor;
 	}
-	
-	public static BiPredicate<Coordinate, Board> movingMyOwnFigure(Color playerColor){
-		return (from, board) -> board.getPieceAt(from) != null
-				&& board.getPieceAt(from).getColor() == playerColor;
+
+	public static BiPredicate<Coordinate, Board> movingMyOwnFigure(Color playerColor) {
+		return (from, board) -> board.getPieceAt(from) != null && board.getPieceAt(from).getColor() == playerColor;
+	}
+
+	public static BiPredicate<Coordinate, Move> checkEnPassant() {
+		return (spot,
+				move) -> (move.getMovedPiece().getColor() == Color.WHITE && move.getFrom().getX() == spot.getX()
+						&& move.getTo().getX() == spot.getX() && move.getFrom().getY() == (spot.getY() - 1)
+						&& move.getTo().getY() == (spot.getY() + 1))
+						|| (move.getMovedPiece().getColor() == Color.BLACK && move.getFrom().getX() == spot.getX()
+								&& move.getTo().getX() == spot.getX() && move.getFrom().getY() == (spot.getY() + 1)
+								&& move.getTo().getY() == (spot.getY() - 1));
 	}
 }

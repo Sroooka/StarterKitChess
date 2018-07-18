@@ -12,10 +12,6 @@ import com.capgemini.chess.algorithms.implementation.exceptions.KingInCheckExcep
 
 import static com.capgemini.chess.algorithms.data.PredicateFactory.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class MovementManager {
 
 	private Coordinate from;
@@ -71,7 +67,7 @@ public class MovementManager {
 			throw new InvalidMoveException();
 		}
 	}
-	
+
 	public Move validateWithoutPlayer() throws KingInCheckException, InvalidMoveException {
 		pieceIsOnBoard();
 		sourceSpotIsNotEmpty();
@@ -121,11 +117,7 @@ public class MovementManager {
 	}
 
 	private Move validateKing() throws InvalidMoveException, KingInCheckException {
-
-		// TODO sprawdzanie czy wykonywana jest roszada, wtedy max range krola
-
 		checkRangeOfLength(1);
-
 		return movementDone();
 	}
 
@@ -182,12 +174,35 @@ public class MovementManager {
 			return attackDone();
 
 		} else if (isMovementDiagonal().test(from, to)) {
+
 			checkRangeOfLength(1);
-			destinationSpotCannotBeEmpty();
-			destinationSpotMustContainEnemy();
-			return captureDone();
+			if (destinationSpotIsEmpty()) {
+				// checkEnPassantValidator
+				// possibility to make el passant
+				//
+				historyMustBeNotEmpty();
+				checkEnPassantPossibility();
+				return enPassantDone();
+			} else {
+				destinationSpotMustContainEnemy();
+				return captureDone();
+			}
+
 		}
 		throw new InvalidMoveException();
+	}
+
+	private void historyMustBeNotEmpty() throws InvalidMoveException {
+		if (board.getMoveHistory() == null || board.getMoveHistory().isEmpty()) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void checkEnPassantPossibility() throws InvalidMoveException {
+		Move previousMovement = board.getMoveHistory().get(board.getMoveHistory().size() - 1);
+		if (previousMovement==null && !checkEnPassant().test(to, previousMovement)) {
+			throw new InvalidMoveException();
+		}
 	}
 
 	public void pieceIsOnBoard() throws InvalidMoveException {
@@ -290,10 +305,8 @@ public class MovementManager {
 		}
 	}
 
-	private void destinationSpotCannotBeEmpty() throws InvalidMoveException {
-		if (isSpotEmpty().test(to, board)) {
-			throw new InvalidMoveException();
-		}
+	private boolean destinationSpotIsEmpty() throws InvalidMoveException {
+		return isSpotEmpty().test(to, board);
 	}
 
 	private void destinationSpotMustContainEnemy() throws InvalidMoveException {
@@ -305,6 +318,13 @@ public class MovementManager {
 	private Move captureDone() throws InvalidMoveException {
 		cantCaptureKing();
 		movement.setType(MoveType.CAPTURE);
+		movement.setMovedPiece(board.getPieceAt(from));
+		myKingCantBeUndelied(movement);
+		return movement;
+	}
+
+	private Move enPassantDone() throws InvalidMoveException {
+		movement.setType(MoveType.EN_PASSANT);
 		movement.setMovedPiece(board.getPieceAt(from));
 		myKingCantBeUndelied(movement);
 		return movement;
@@ -403,10 +423,10 @@ public class MovementManager {
 				tempBoard.setPieceAt(board.getPieceAt(spot), spot);
 			}
 		}
-		for(Move move : board.getMoveHistory()){
+		for (Move move : board.getMoveHistory()) {
 			tempBoard.getMoveHistory().add(move);
 		}
-		
+
 		System.out.println("new Board created");
 
 		// perform move

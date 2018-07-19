@@ -25,29 +25,24 @@ public class PredicateFactory {
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isMovementTooLong(int maxRange) {
-
 		return (from, to) -> (Math.abs(from.getX() - to.getX()) > maxRange)
 				|| (Math.abs(from.getY() - to.getY()) > maxRange);
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isMovementStraight() {
-
 		return (from, to) -> (from.getX() == to.getX()) && (from.getY() != to.getY())
 				|| (from.getX() != to.getX()) && (from.getY() == to.getY());
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isMovementDiagonal() {
-
 		return (from, to) -> (Math.abs(from.getX() - to.getX())) == (Math.abs(from.getY() - to.getY()));
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isWhiteForwardMovement() {
-
 		return (from, to) -> from.getY() < to.getY();
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isBlackForwardMovement() {
-
 		return (from, to) -> from.getY() > to.getY();
 	}
 
@@ -56,18 +51,15 @@ public class PredicateFactory {
 	}
 
 	public static BiPredicate<Piece, Piece> isThisEnemyPiece() {
-
 		return (pieceFrom, pieceTo) -> pieceFrom.getColor() != pieceTo.getColor();
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> isMovementLShaped() {
-
 		return (from, to) -> (Math.abs(from.getX() - to.getX()) == 2) && (Math.abs(from.getY() - to.getY()) == 1)
 				|| (Math.abs(from.getX() - to.getX()) == 1) && (Math.abs(from.getY() - to.getY()) == 2);
 	}
 
 	public static BiPredicate<Coordinate, Coordinate> theSameCoordinates() {
-
 		return (from, to) -> from.getX() == to.getX() && from.getY() == to.getY();
 	}
 
@@ -86,11 +78,10 @@ public class PredicateFactory {
 
 	public static BiPredicate<Coordinate, Move> checkEnPassant() {
 		return (spot,
-				move) -> (move.getMovedPiece().getColor() == Color.WHITE && move.getFrom().getX() == spot.getX()
-						&& move.getTo().getX() == spot.getX() && move.getFrom().getY() == (spot.getY() - 1)
-						&& move.getTo().getY() == (spot.getY() + 1))
-						|| (move.getMovedPiece().getColor() == Color.BLACK && move.getFrom().getX() == spot.getX()
-								&& move.getTo().getX() == spot.getX() && move.getFrom().getY() == (spot.getY() + 1)
+				move) -> (move.getMovedPiece().getColor() == Color.WHITE && move.getTo().getX() == spot.getX()
+						&& move.getFrom().getY() == (spot.getY() - 1) && move.getTo().getY() == (spot.getY() + 1))
+						|| (move.getMovedPiece().getColor() == Color.BLACK && move.getTo().getX() == spot.getX()
+								&& move.getFrom().getY() == (spot.getY() + 1)
 								&& move.getTo().getY() == (spot.getY() - 1));
 	}
 

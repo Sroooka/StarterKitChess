@@ -5,7 +5,6 @@ import com.capgemini.chess.algorithms.data.Move;
 import com.capgemini.chess.algorithms.data.enums.Color;
 import com.capgemini.chess.algorithms.data.enums.MoveType;
 import com.capgemini.chess.algorithms.data.enums.Piece;
-import com.capgemini.chess.algorithms.data.enums.PieceType;
 import com.capgemini.chess.algorithms.data.generated.Board;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveException;
 import com.capgemini.chess.algorithms.implementation.exceptions.KingInCheckException;
@@ -117,7 +116,7 @@ public class MovementManager {
 	}
 
 	private Move validateKing() throws InvalidMoveException, KingInCheckException {
-		if (lenghtOfMovementEquals(2)) { //
+		if (lenghtOfMovementEquals(5)) { //
 			isCastling();
 			return castlingtDone();
 		} else {

@@ -17,7 +17,6 @@ import com.capgemini.chess.algorithms.data.generated.Board;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveException;
 import com.capgemini.chess.algorithms.implementation.exceptions.KingInCheckException;
 
-import static com.capgemini.chess.algorithms.data.PredicateFactory.isSpotEmpty;
 import static junit.framework.Assert.*;
 
 @SuppressWarnings("deprecation")
@@ -2187,5 +2186,241 @@ public class MovementManagerTest {
 		boardManager.updateBoardState();
 		assertEquals(BoardState.CHECK_MATE, board.getState());
 
+	}
+
+	@Test
+	public void testPerformMoveCastlingForWhiteRightRook() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(4, 0));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(7, 0));
+		
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		Move move = boardManager.performMove(new Coordinate(4, 0), new Coordinate(6, 0));
+		
+		// then
+		assertEquals(MoveType.CASTLING, move.getType());
+		assertEquals(Piece.WHITE_KING, move.getMovedPiece());
+	}
+	
+	@Test
+	public void testPerformMoveCastlingForBlackRightRook() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.BLACK_KING, new Coordinate(4, 7));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(7, 7));
+		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(0, 1));
+		
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		boardManager.performMove(new Coordinate(0, 1), new Coordinate(0, 2));
+		Move move = boardManager.performMove(new Coordinate(4, 7), new Coordinate(6, 7));
+		
+		// then
+		assertEquals(MoveType.CASTLING, move.getType());
+		assertEquals(Piece.BLACK_KING, move.getMovedPiece());
+	}
+	
+	@Test
+	public void testPerformMoveCastlingWhenTooLongKingMovement() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(3, 0));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(7, 0));
+		
+		// when
+		boolean exceptionThrown = false;
+		try {
+			BoardManager boardManager = new BoardManager(board);
+			boardManager.performMove(new Coordinate(3, 0), new Coordinate(6, 0));
+		} catch (InvalidMoveException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void testPerformMoveCastlingWhenRookWasMoved() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(4, 0));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(7, 0));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(7, 7));
+		
+		BoardManager boardManager = new BoardManager(board);
+		boardManager.performMove(new Coordinate(7, 0), new Coordinate(7, 3));
+		boardManager.performMove(new Coordinate(7, 7), new Coordinate(7, 6));
+		boardManager.performMove(new Coordinate(7, 3), new Coordinate(7, 0));
+		boardManager.performMove(new Coordinate(7, 6), new Coordinate(7, 7));
+		
+		// when
+		boolean exceptionThrown = false;
+		try {
+			
+			boardManager.performMove(new Coordinate(4, 0), new Coordinate(6, 0));
+		} catch (InvalidMoveException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void testPerformMoveCastlingWhenKingWasMoved() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(4, 0));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(7, 0));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(7, 7));
+		
+		BoardManager boardManager = new BoardManager(board);
+		boardManager.performMove(new Coordinate(4, 0), new Coordinate(4, 1));
+		boardManager.performMove(new Coordinate(7, 7), new Coordinate(7, 6));
+		boardManager.performMove(new Coordinate(4, 1), new Coordinate(4, 0));
+		boardManager.performMove(new Coordinate(7, 6), new Coordinate(7, 7));
+		
+		// when
+		boolean exceptionThrown = false;
+		try {
+			
+			boardManager.performMove(new Coordinate(4, 0), new Coordinate(6, 0));
+		} catch (InvalidMoveException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void testPerformMoveCastlingWhenDestinationSpotIsNotEmpty() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(4, 0));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(7, 0));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(7, 7));
+		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(6, 0));
+		
+		BoardManager boardManager = new BoardManager(board);
+		
+		// when
+		boolean exceptionThrown = false;
+		try {
+			
+			boardManager.performMove(new Coordinate(4, 0), new Coordinate(6, 0));
+		} catch (InvalidMoveException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void testPerformMoveCastlingWhenThereIsObstacleBetweenKingAndRook() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(4, 0));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(7, 0));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(7, 7));
+		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(5, 0));
+		
+		BoardManager boardManager = new BoardManager(board);
+		
+		// when
+		boolean exceptionThrown = false;
+		try {
+			
+			boardManager.performMove(new Coordinate(4, 0), new Coordinate(6, 0));
+		} catch (InvalidMoveException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void testPerformMoveCastlingWhenSkippedSpotIsUnderAttack() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(4, 0));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(7, 0));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(5, 7));
+		
+		BoardManager boardManager = new BoardManager(board);
+		
+		// when
+		boolean exceptionThrown = false;
+		try {
+			
+			boardManager.performMove(new Coordinate(4, 0), new Coordinate(6, 0));
+		} catch (InvalidMoveException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+
+	@Test
+	public void testPerformMoveCastlingWhenDestinationSpotIsUnderAttack() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(4, 0));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(7, 0));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(6, 7));
+		
+		BoardManager boardManager = new BoardManager(board);
+		
+		// when
+		boolean exceptionThrown = false;
+		try {
+			
+			boardManager.performMove(new Coordinate(4, 0), new Coordinate(6, 0));
+		} catch (InvalidMoveException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void testPerformMoveCastlingForWhiteLeftRook() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(6, 0));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(0, 0));
+		
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		Move move = boardManager.performMove(new Coordinate(6, 0), new Coordinate(4, 0));
+		
+		// then
+		assertEquals(MoveType.CASTLING, move.getType());
+		assertEquals(Piece.WHITE_KING, move.getMovedPiece());
+	}
+	
+	@Test
+	public void testPerformMoveCastlingForBlackLeftRook() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.BLACK_KING, new Coordinate(6, 7));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(0, 7));
+		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(0, 1));
+		
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		boardManager.performMove(new Coordinate(0, 1), new Coordinate(0, 2));
+		Move move = boardManager.performMove(new Coordinate(6, 7), new Coordinate(4, 7));
+		
+		// then
+		assertEquals(MoveType.CASTLING, move.getType());
+		assertEquals(Piece.BLACK_KING, move.getMovedPiece());
 	}
 }

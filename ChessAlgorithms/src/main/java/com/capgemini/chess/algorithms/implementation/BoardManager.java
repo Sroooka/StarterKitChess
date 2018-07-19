@@ -240,15 +240,12 @@ public class BoardManager {
 
 	private boolean isKingInCheck(Color kingColor) {
 		MovementManager movementManager = new MovementManager(this.board);
-		// TODO please add implementation here
 		return movementManager.isKingInCheckValidator(kingColor);
 	}
 
 	private boolean isAnyMoveValid(Color nextMoveColor) {
 		MovementManager movementManager = new MovementManager(this.board);
 		return movementManager.areAnyPossibleMoves(nextMoveColor);
-		// TODO please add implementation here
-
 	}
 
 	private Color calculateNextMoveColor() {

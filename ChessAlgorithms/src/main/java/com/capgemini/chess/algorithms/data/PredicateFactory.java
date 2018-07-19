@@ -93,4 +93,9 @@ public class PredicateFactory {
 								&& move.getTo().getX() == spot.getX() && move.getFrom().getY() == (spot.getY() + 1)
 								&& move.getTo().getY() == (spot.getY() - 1));
 	}
+
+	public static BiPredicate<Move, Piece> doesMovementContainPiece() {
+		return (move, piece) -> move.getMovedPiece().getType() == piece.getType()
+				&& move.getMovedPiece().getColor() == piece.getColor();
+	}
 }

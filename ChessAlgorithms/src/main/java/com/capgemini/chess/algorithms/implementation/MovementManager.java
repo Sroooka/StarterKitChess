@@ -117,8 +117,14 @@ public class MovementManager {
 	}
 
 	private Move validateKing() throws InvalidMoveException, KingInCheckException {
-		checkRangeOfLength(1);
-		return movementDone();
+		if (lenghtOfMovementEquals(2)) { //
+			isCastling();
+			return castlingtDone();
+		} else {
+			checkRangeOfLength(1);
+			return movementDone();
+		}
+
 	}
 
 	private Move validateQueen() throws InvalidMoveException {
@@ -200,7 +206,7 @@ public class MovementManager {
 
 	private void checkEnPassantPossibility() throws InvalidMoveException {
 		Move previousMovement = board.getMoveHistory().get(board.getMoveHistory().size() - 1);
-		if (previousMovement==null && !checkEnPassant().test(to, previousMovement)) {
+		if (previousMovement == null && !checkEnPassant().test(to, previousMovement)) {
 			throw new InvalidMoveException();
 		}
 	}
@@ -319,38 +325,28 @@ public class MovementManager {
 		cantCaptureKing();
 		movement.setType(MoveType.CAPTURE);
 		movement.setMovedPiece(board.getPieceAt(from));
-		myKingCantBeUndelied(movement);
+		myKingCantBeUndelied();
 		return movement;
 	}
 
+	private Move castlingtDone() {
+		movement.setType(MoveType.CASTLING);
+		movement.setMovedPiece(board.getPieceAt(from));
+		return movement;
+	}
+	
 	private Move enPassantDone() throws InvalidMoveException {
 		movement.setType(MoveType.EN_PASSANT);
 		movement.setMovedPiece(board.getPieceAt(from));
-		myKingCantBeUndelied(movement);
+		myKingCantBeUndelied();
 		return movement;
 	}
 
 	private Move attackDone() throws KingInCheckException {
 
 		movement.setType(MoveType.ATTACK);
-
-		/*
-		 * int deltaY = Math.abs(from.getY() - to.getY()); if (deltaY == 2) { //
-		 * check El Passant Coordinate spot1 = new Coordinate(to.getX() - 1,
-		 * to.getY()); Coordinate spot2 = new Coordinate(to.getX() + 1,
-		 * to.getY()); if (!singlePieceOutOfBoard().test(spot1)) { if
-		 * (!isSpotEmpty().test(spot1, board)) { if
-		 * (isThisEnemyPiece().test(board.getPieceAt(from),
-		 * board.getPieceAt(spot1))) { movement.setType(MoveType.EN_PASSANT); }
-		 * } } if (!singlePieceOutOfBoard().test(spot2)) { if
-		 * (!isSpotEmpty().test(spot2, board)) { if
-		 * (isThisEnemyPiece().test(board.getPieceAt(from),
-		 * board.getPieceAt(spot2))) { movement.setType(MoveType.EN_PASSANT); }
-		 * } } }
-		 */
-
 		movement.setMovedPiece(board.getPieceAt(from));
-		myKingCantBeUndelied(movement);
+		myKingCantBeUndelied();
 		return movement;
 	}
 
@@ -358,13 +354,13 @@ public class MovementManager {
 		if (isSpotEmpty().test(to, board)) {
 			movement.setType(MoveType.ATTACK);
 			movement.setMovedPiece(board.getPieceAt(from));
-			myKingCantBeUndelied(movement);
+			myKingCantBeUndelied();
 			return movement;
 		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
 			cantCaptureKing();
 			movement.setType(MoveType.CAPTURE);
 			movement.setMovedPiece(board.getPieceAt(from));
-			myKingCantBeUndelied(movement);
+			myKingCantBeUndelied();
 			return movement;
 		} else {
 			throw new InvalidMoveException();
@@ -413,7 +409,7 @@ public class MovementManager {
 		return false;
 	}
 
-	private void myKingCantBeUndelied(Move possibleMove) throws KingInCheckException {
+	private void myKingCantBeUndelied() throws KingInCheckException {
 		System.out.println("Im in king cant be unvelied");
 		Color myColor = board.getPieceAt(from).getColor();
 		Board tempBoard = new Board();
@@ -499,6 +495,67 @@ public class MovementManager {
 	private void playerIsMovingHisOwnFigure() throws InvalidMoveException {
 		System.out.println("Not that player!");
 		if (!movingMyOwnFigure(calculateActualPlayerColor()).test(from, board)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void isCastling() throws InvalidMoveException {
+		movementMustBeStraight();
+		Coordinate tempTo = this.to;
+		this.to = findValidRook();
+		checkObstaclesWhenMovingStraight();
+		this.to = tempTo;
+		destinationSpotMustBeEmpty();
+		mustBeFirstMovementOfKing();
+		mustBeFirstMovementOfRook();
+		checkSpotsThatKingCanReachAreNotUnderAttack();
+	}
+
+	private void checkSpotsThatKingCanReachAreNotUnderAttack() throws KingInCheckException{
+		int moveDirection = ((from.getX()-to.getX()) > 0) ? -1 : 1;
+		Coordinate tempTo = this.to;
+		Coordinate spotBetweenKingAndDestination = new Coordinate(from.getX() + moveDirection, from.getY());
+		myKingCantBeUndelied();
+		this.to= spotBetweenKingAndDestination;
+		myKingCantBeUndelied();
+		this.to= tempTo;
+	}
+	
+	private Coordinate findValidRook() {
+		Coordinate cord = ((from.getX() - to.getX()) > 0) ? new Coordinate(0, from.getY())
+				: new Coordinate(7, from.getY());
+		return cord;
+	}
+
+	private void mustBeFirstMovementOfKing() throws InvalidMoveException {
+		Color myColor = board.getPieceAt(from).getColor();
+		Piece king = (myColor == Color.WHITE) ? Piece.WHITE_KING : Piece.BLACK_KING;
+		for (Move move : board.getMoveHistory()) {
+			if (doesMovementContainPiece().test(move, king)) {
+				throw new InvalidMoveException();
+			}
+		}
+	}
+
+	private void mustBeFirstMovementOfRook() throws InvalidMoveException {
+		Color myColor = board.getPieceAt(from).getColor();
+		Piece rook = (myColor == Color.WHITE) ? Piece.WHITE_ROOK : Piece.BLACK_ROOK;
+		for (Move move : board.getMoveHistory()) {
+			if (doesMovementContainPiece().test(move, rook)) {
+				throw new InvalidMoveException();
+			}
+		}
+	}
+
+	private boolean lenghtOfMovementEquals(int i)  {
+		if (Math.abs(from.getX() - to.getX()) != 2) {
+			return false;
+		}
+		return true;
+	}
+
+	private void destinationSpotMustBeEmpty() throws InvalidMoveException {
+		if (!isSpotEmpty().test(to, board)) {
 			throw new InvalidMoveException();
 		}
 	}

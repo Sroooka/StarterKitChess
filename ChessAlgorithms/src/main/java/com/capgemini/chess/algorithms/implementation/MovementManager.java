@@ -294,7 +294,6 @@ public class MovementManager {
 	}
 	
 	private Move captureDone() throws InvalidMoveException {
-		cantCaptureKing();
 		movement.setType(MoveType.CAPTURE);
 		movement.setMovedPiece(board.getPieceAt(from));
 		myKingCantBeUndelied();
@@ -321,18 +320,11 @@ public class MovementManager {
 			myKingCantBeUndelied();
 			return movement;
 		} else if (isThisEnemyPiece().test(board.getPieceAt(from), board.getPieceAt(to))) {
-			cantCaptureKing();
 			movement.setType(MoveType.CAPTURE);
 			movement.setMovedPiece(board.getPieceAt(from));
 			myKingCantBeUndelied();
 			return movement;
 		} else {
-			throw new InvalidMoveException();
-		}
-	}
-
-	private void cantCaptureKing() throws InvalidMoveException {
-		if (pieceIsKing().test(board.getPieceAt(to))) {
 			throw new InvalidMoveException();
 		}
 	}
